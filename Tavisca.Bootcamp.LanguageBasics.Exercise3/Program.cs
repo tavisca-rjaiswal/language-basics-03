@@ -41,48 +41,63 @@ namespace Tavisca.Bootcamp.LanguageBasics.Exercise1
         public static int[] SelectMeals(int[] protein, int[] carbs, int[] fat, string[] dietPlans)
         {
             int l = protein.Length;
-            int calorie;
-            int[][] grid = new int[l][];
-            for (int i = 0; i < l; i++)
-            {
-                calorie = (5 * protein[i]) + (5 * carbs[i]) + (9 * fat[i]);
-                grid[i] = new int[] { protein[i], carbs[i], fat[i], calorie, i };
-            }
-            int[][] g1 = new int[l][];
+            int[][] nutritionGrid = new int[l][];
+
+            GenerateNutritionGrid(ref nutritionGrid, l, protein, carbs, fat);
+
+            int[][] sortedGrid = new int[l][];
             int[] menuSelection = new int[dietPlans.Length];
-            int getIndex(char s)
-            {
-                int col;
-                if (s.Equals('p') || s.Equals('P'))
-                {
-                    col = 0;
-                }
-                else if (s.Equals('c') || s.Equals('C'))
-                {
-                    col = 1;
-                }
-                else if (s.Equals('f') || s.Equals('F'))
-                {
-                    col = 2;
-                }
-                else
-                {
-                    col = 3;
-                }
-                return col;
-            }
+
             for (int j = 0; j < dietPlans.Length; j++)
             {
                 string diet = dietPlans[j];
                 int[] col = { -1, -1, -1, -1 };
                 for (int i = 0; i < diet.Length; i++)
                 {
-                    col[i] = getIndex(diet[i]);
+                    col[i] = GetIndex(diet[i]);
                 }
-                g1 = grid.OrderBy(x => (col[0] != -1 ? Char.IsLower(diet[0]) ? x[col[0]] : -x[col[0]] : 0, col[1] != -1 ? Char.IsLower(diet[1]) ? x[col[1]] : -x[col[1]] : 0, col[2] != -1 ? Char.IsLower(diet[2]) ? x[col[2]] : -x[col[2]] : 0, col[3] != -1 ? Char.IsLower(diet[3]) ? x[col[3]] : -x[col[3]] : 0)).ToArray();
-                menuSelection[j] = g1[0][4];
+                sortedGrid = getSortedGrid(nutritionGrid, col, diet);
+                menuSelection[j] = sortedGrid[0][4];
             }
+
             return menuSelection;
+        }
+
+        private static int[][] getSortedGrid(int[][] nutritionGrid, int[] col, string diet)
+        {
+            return nutritionGrid.OrderBy(x => (col[0] != -1 ? Char.IsLower(diet[0]) ? x[col[0]] : -x[col[0]] : 0, col[1] != -1 ? Char.IsLower(diet[1]) ? x[col[1]] : -x[col[1]] : 0, col[2] != -1 ? Char.IsLower(diet[2]) ? x[col[2]] : -x[col[2]] : 0, col[3] != -1 ? Char.IsLower(diet[3]) ? x[col[3]] : -x[col[3]] : 0)).ToArray();
+        }
+
+        private static void GenerateNutritionGrid(ref int[][] nutritionGrid,int l,int[] protein, int[] carbs, int[] fat)
+        {
+            int calorie;
+            for (int i = 0; i < l; i++)
+            {
+                calorie = (5 * protein[i]) + (5 * carbs[i]) + (9 * fat[i]);
+                nutritionGrid[i] = new int[] { protein[i], carbs[i], fat[i], calorie, i };
+            }
+        }
+
+        public static int GetIndex(char s)
+        {
+            int col;
+            if (s.Equals('p') || s.Equals('P'))
+            {
+                col = 0;
+            }
+            else if (s.Equals('c') || s.Equals('C'))
+            {
+                col = 1;
+            }
+            else if (s.Equals('f') || s.Equals('F'))
+            {
+                col = 2;
+            }
+            else
+            {
+                col = 3;
+            }
+            return col;
         }
     }
 }
